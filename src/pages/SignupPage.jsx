@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 function Signup() {
     const [showPassword, setShowPassword] = useState(false);
@@ -13,11 +14,11 @@ function Signup() {
     const navigate = useNavigate();
 
     const validationSchema = Yup.object({
-        firstName: Yup.string().required("First name required"),
-        lastName: Yup.string().required("Last name required"),
+        first_name: Yup.string().required("First name required"),
+        last_name: Yup.string().required("Last name required"),
         email: Yup.string().email("Invalid email").required("Email required"),
         password: Yup.string().required("Password required"),
-        confirmPassword: Yup.string()
+        password_confirmation: Yup.string()
             .oneOf([Yup.ref("password")], "Passwords must match")
             .required("Confirm password required"),
         terms: Yup.boolean().oneOf([true], "You must accept terms"),
@@ -31,17 +32,28 @@ function Signup() {
             last_name: values.last_name,
             email: values.email,
             password: values.password,
-            password_confirmation: values.confirmPassword,
+            password_confirmation: values.password_confirmation,
         };
 
         try {
             const res = await axios.post("https://bookstore.eraasoft.pro/api/register", payload);
+            let token = res.data.token;
+            sessionStorage.setItem("token", token);
+            toast.success("Registration successful!");
             console.log(res.data);
             navigate("/login");
         } catch (error) {
+            toast.error("Registration failed");
             setApiError(error.response?.data?.message || "Something went wrong");
+
         }
     };
+    useEffect(() => {
+        let token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        if (token) {
+            navigate("/login");
+        }
+    }, []);
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -52,7 +64,7 @@ function Signup() {
                         last_name: "",
                         email: "",
                         password: "",
-                        confirmPassword: "",
+                        password_confirmation: "",
                         terms: false,
                     }}
                     validationSchema={validationSchema}
@@ -110,7 +122,7 @@ function Signup() {
                             <label className="block text-gray-700 font-medium mb-2">Confirm password</label>
                             <div className="relative">
                                 <Field
-                                    name="confirmPassword"
+                                    name="password_confirmation"
                                     type={showConfirm ? "text" : "password"}
                                     placeholder="Enter password"
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D9176C]"
@@ -119,7 +131,7 @@ function Signup() {
                                     {showConfirm ? <FaEyeSlash /> : <FaEye />}
                                 </button>
                             </div>
-                            <ErrorMessage name="confirmPassword" component="div" className="text-red-500 text-xs" />
+                            <ErrorMessage name="password_confirmation" component="div" className="text-red-500 text-xs" />
                         </div>
 
                         {/* Terms */}

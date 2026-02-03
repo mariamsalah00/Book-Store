@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Field, Form, Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
@@ -19,12 +20,18 @@ function LoginPage() {
 
     const handleLogin = async (values) => {
         setApiError(""); 
+        let url="https://bookstore.eraasoft.pro/api/login"
         try {
             const res = await axios.post(
-                "https://bookstore.eraasoft.pro/api/login",
+                url,
                 values
             );
             console.log("Login successful:", res.data);
+            let token = res.data.token;
+            values.remember ?
+            localStorage.setItem("token", token) :
+            sessionStorage.setItem("token", token);
+            toast.success("Login successful!");
             navigate("/");
         } catch (error) {
             if (error.response?.data?.message) {
@@ -32,8 +39,15 @@ function LoginPage() {
             } else {
                 setApiError("Invalid email or password");
             }
+            toast.error("Login failed");
         }
     };
+    useEffect(() => {
+        let token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if(token){
+        navigate("/");
+        }
+     }, []);
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-#F5F5F5">
