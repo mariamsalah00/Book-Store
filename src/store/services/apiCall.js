@@ -12,6 +12,7 @@ const api = axios.create({
 export const authService = {
   login: async (credentials) => {
     const response = await api.post("/login", credentials);
+    console.log(response.data);
     return response.data;
   },
 

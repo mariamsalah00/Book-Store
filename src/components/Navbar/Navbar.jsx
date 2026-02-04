@@ -6,6 +6,8 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function Navbar() {
   const isAuthenticated = useAuthstore((state) => state.isAuthenticated);
+  const user = useAuthstore((state) => state.user);
+  console.log(user);
   const logout = useAuthstore((state) => state.logout);
   const navigate = useNavigate();
 
@@ -26,7 +28,7 @@ export default function Navbar() {
       </div>
 
       {/* Auth Buttons */}
-      <div className="nav-btns flex items-center gap-3">
+      <div className="nav-btns flex items-center justify-center gap-3">
         {!isAuthenticated ? (
           <>
             <Link
@@ -44,15 +46,33 @@ export default function Navbar() {
             </Link>
           </>
         ) : (
-          <button
-            className="px-4 py-2 rounded bg-white/20 text-white border border-white/20"
-            onClick={() => {
-              logout();
-              navigate("/login");
-            }}
-          >
-            logout
-          </button>
+          <>
+            <div className="avatar flex items-center gap-3 text-white mr-4">
+              <div className="w-10 h-10 rounded-full border-2 border-white/20 ">
+                <img
+                  src="https://img.daisyui.com/images/profile/demo/batperson@192.webp"
+                  alt="avatar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-medium text-white/70">
+                {user?.first_name} {user?.last_name}
+              </span>
+              <span className="text-xs text-white/70">{user?.email}</span>
+            </div>
+
+            <button
+              className="px-4 py-2 rounded bg-white/20 text-white border border-white/20"
+              onClick={() => {
+                logout();
+                navigate("/login");
+              }}
+            >
+              logout
+            </button>
+          </>
         )}
       </div>
     </nav>

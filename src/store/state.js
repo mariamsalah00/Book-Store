@@ -6,6 +6,7 @@ export const useAuthstore = create(
   persist(
     (set) => ({
       token: null,
+      user: null,
       isAuthenticated: false,
       isLoading: false,
       error: null,
@@ -13,8 +14,15 @@ export const useAuthstore = create(
       login: async (credentials) => {
         set({ isLoading: true, error: null });
         try {
-          const { token } = await authService.login(credentials);
-          set({ token, isAuthenticated: true, isLoading: false, error: null });
+          const { data } = await authService.login(credentials);
+          const { token, user } = data;
+          set({
+            token,
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          });
           return { success: true };
         } catch (error) {
           const message =
@@ -30,6 +38,7 @@ export const useAuthstore = create(
       logout: () =>
         set({
           token: null,
+          user: null,
           isAuthenticated: false,
           error: null,
         }),
@@ -40,6 +49,7 @@ export const useAuthstore = create(
       name: "auth-storage",
       partialize: (state) => ({
         token: state.token,
+        user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
     },
