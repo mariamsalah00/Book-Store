@@ -15,18 +15,6 @@ function Signup() {
   const [apiError, setApiError] = useState("");
 
   const navigate = useNavigate();
-
-  // const validationSchema = Yup.object({
-  //     first_name: Yup.string().required("First name required"),
-  //     last_name: Yup.string().required("Last name required"),
-  //     email: Yup.string().email("Invalid email").required("Email required"),
-  //     password: Yup.string().required("Password required"),
-  //     password_confirmation: Yup.string()
-  //         .oneOf([Yup.ref("password")], "Passwords must match")
-  //         .required("Confirm password required"),
-  //     terms: Yup.boolean().oneOf([true], "You must accept terms"),
-  // });
-
   const handleSubmit = async (values) => {
     setApiError("");
 

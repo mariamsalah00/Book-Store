@@ -1,21 +1,16 @@
 import NavbarLogo from "./NavbarLogo";
 import LinkItem from "../ui/LinkItem";
 import { FaHeart, FaShoppingCart } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useAuthstore } from "../../states/state";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Navbar() {
-    const [token, setToken] = useState(null);
-
-    useEffect(() => {
-        const storedToken = localStorage.getItem("token") || sessionStorage.getItem("token");
-        setToken(storedToken);
-    }, []);
+    const isAuthinticated = useAuthstore((state) => state.isAuthinticated);
+    const logout = useAuthstore((state) => state.logout);
+    const navigate = useNavigate();
 
     return (
-        <nav
-            className="fixed top-0 left-0 right-0 z-50 flex items-center py-7.5 px-35 bg-white/10 backdrop-blur-sm border-b border-white/20 "
-        
-        >
+        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center py-7.5 px-35 bg-white/20 border-b border-white/20 ">
             <NavbarLogo />
 
             <div className="nav-links flex items-center gap-10 mr-auto">
@@ -31,16 +26,32 @@ export default function Navbar() {
             </div>
 
             {/* Auth Buttons */}
-            {!token && (
-                <div className="nav-btns flex items-center gap-3">
-                    <LinkItem to="/login" width={"fit"} isMainBtn={true}>
-                        login
-                    </LinkItem>
-                    <LinkItem to="/signup" width={"fit"} isMainBtn={false}>
-                        sign up
-                    </LinkItem>
-                </div>
-            )}
+            <div className="nav-btns flex items-center gap-3">
+                {!isAuthinticated ? (
+                    <>
+                        <Link
+                        className="px-4 py-2 rounded bg-white/20 text-white border border-white/20"
+                        to="/login">
+                            login
+                        </Link>
+
+                        <Link
+                        className="px-4 py-2 rounded bg-white/20 text-white border border-white/20"
+                        to="/signup">
+                            sign up
+                        </Link>
+                    </>
+                ) : (
+                    <button
+                        className="px-4 py-2 rounded bg-white/20 text-white border border-white/20"
+                        onClick={() => {
+                            logout();
+                            navigate("/login");
+                        }}>
+                        logout
+                    </button>
+                )}
+            </div>
         </nav>
     );
 }

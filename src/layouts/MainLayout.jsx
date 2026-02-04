@@ -1,20 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet,Navigate } from "react-router-dom";
 import homeimage from "../assets/images/Homeheader.png";
+import { useAuthstore } from "../states/state";
 
 export default function MainLayout() {
-  const navigate = useNavigate();
+  const isAuthinticated = useAuthstore((state) => state.isAuthinticated);
 
-  // Protection For Route - only authenticated users can access
-  useEffect(() => {
-    let token =
-      localStorage.getItem("token") || sessionStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-    }
-  }, [navigate]);
+  if (isAuthinticated) {
+    return <Navigate to="/login" replace/>;
+  }
 
   return (
     <>

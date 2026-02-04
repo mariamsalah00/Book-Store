@@ -6,20 +6,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
-
-// make your schema in separate file and import it here
-// make your code clean
+import { useAuthstore } from "../states/state";
 import { loginValidationSchema } from "../schema";
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState("");
 
-  // const validationSchema = Yup.object({
-  //     email: Yup.string().email("Email is invalid").required("Email is required"),
-  //     password: Yup.string().required("Password is required"),
-  // });
-
+  const login = useAuthstore((state) => state.login);
   const navigate = useNavigate();
 
   const handleLogin = async (values) => {
@@ -29,9 +23,7 @@ function LoginPage() {
       const res = await axios.post(url, values);
       console.log("Login successful:", res.data);
       let token = res.data.token;
-      values.remember
-        ? localStorage.setItem("token", token)
-        : sessionStorage.setItem("token", token);
+      login(token);
       toast.success("Login successful!");
       navigate("/");
     } catch (error) {
