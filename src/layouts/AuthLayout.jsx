@@ -3,14 +3,15 @@ import { Outlet, Navigate } from "react-router-dom";
 import homeimage from "../assets/images/Homeheader.png";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer";
-import { useAuthstore } from "../states/state";
+import { useAuthstore } from "../store/state";
 
 export default function AuthLayout() {
- 
-  const isAuthinticated = useAuthstore( (state) => state.isAuthinticated);
+  const isAuthinticated = useAuthstore((state) => state.isAuthinticated);
 
   // // If user is already logged in, redirect to home
-{isAuthinticated && <Navigate to="/" />}
+  {
+    isAuthinticated && <Navigate to="/" />;
+  }
 
   return (
     <>
@@ -25,8 +26,6 @@ export default function AuthLayout() {
       >
         {" "}
         <Navbar />
-
-      
       </div>
 
       <Outlet />

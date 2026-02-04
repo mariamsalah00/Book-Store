@@ -1,52 +1,62 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
-
-// same here like login
 import { signupValidationSchema } from "../schema";
+import { useAuthstore } from "../store/state";
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [apiError, setApiError] = useState("");
-
   const navigate = useNavigate();
+
+  // is more clean
+  const { signup, error, isLoading, clearError } = useAuthstore();
+
+  // make it simple call the api centrelaize once
+  // use states => { signup, error, isLoading, clearError } instead of handle it with useState and try catch blocks
   const handleSubmit = async (values) => {
-    setApiError("");
-
-    const payload = {
-      first_name: values.first_name,
-      last_name: values.last_name,
-      email: values.email,
-      password: values.password,
-      password_confirmation: values.password_confirmation,
-    };
-
-    try {
-      const res = await axios.post(
-        "https://bookstore.eraasoft.pro/api/register",
-        payload,
-      );
-      let token = res.data.token;
-      sessionStorage.setItem("token", token);
+    clearError();
+    const result = await signup(values);
+    if (result.success) {
       toast.success("Registration successful!");
-      console.log(res.data);
-      navigate("/login");
-    } catch (error) {
+      navigate("/");
+    } else {
       toast.error("Registration failed");
-      setApiError(error.response?.data?.message || "Something went wrong");
     }
   };
 
+  // const handleSubmit = async (values) => {
+  //   setApiError("");
+
+  //   const payload = {
+  //     first_name: values.first_name,
+  //     last_name: values.last_name,
+  //     email: values.email,
+  //     password: values.password,
+  //     password_confirmation: values.password_confirmation,
+  //   };
+
+  //   try {
+  //     const res = await axios.post(
+  //       "https://bookstore.eraasoft.pro/api/register",
+  //       payload,
+  //     );
+  //     let token = res.data.token;
+  //     sessionStorage.setItem("token", token);
+  //     toast.success("Registration successful!");
+  //     console.log(res.data);
+  //     navigate("/login");
+  //   } catch (error) {
+  //     toast.error("Registration failed");
+  //     setApiError(error.response?.data?.message || "Something went wrong");
+  //   }
+  // };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className=" p-8 rounded-xl  w-full max-w-md">
-
-     
+      <div className=" p-8 rounded-xl  w-full max-w-md">
         <Formik
           initialValues={{
             first_name: "",
@@ -61,9 +71,9 @@ function Signup() {
         >
           <Form className="space-y-4">
             {/* API Error */}
-            {apiError && (
+            {error && (
               <div className="text-red-600 text-sm bg-red-100 p-3 rounded-lg">
-                {apiError}
+                {error}
               </div>
             )}
 
@@ -189,9 +199,10 @@ function Signup() {
             {/* Button */}
             <button
               type="submit"
-              className="w-full bg-pink-600 text-white py-2 rounded-lg font-semibold hover:bg-pink-700"
+              disabled={isLoading}
+              className="w-full bg-pink-600 text-white py-2 rounded-lg font-semibold hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign Up
+              {isLoading ? "Signing up..." : "Sign Up"}
             </button>
           </Form>
         </Formik>
@@ -234,7 +245,7 @@ function Signup() {
             </span>{" "}
           </button>{" "}
         </div>
-        </div>
+      </div>
     </div>
   );
 }
