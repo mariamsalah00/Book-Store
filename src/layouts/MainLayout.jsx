@@ -1,15 +1,15 @@
 import React from "react";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer";
-import { Outlet,Navigate } from "react-router-dom";
+import { Outlet, Navigate } from "react-router-dom";
 import homeimage from "../assets/images/Homeheader.png";
-import { useAuthstore } from "../states/state";
+import { useAuthstore } from "../store/state";
 
 export default function MainLayout() {
   const isAuthinticated = useAuthstore((state) => state.isAuthinticated);
 
   if (isAuthinticated) {
-    return <Navigate to="/login" replace/>;
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -25,8 +25,7 @@ export default function MainLayout() {
       >
         {" "}
         <Navbar />
-
-          {/* here you can add your content */}
+        {/* here you can add your content */}
       </div>
 
       <Outlet />
