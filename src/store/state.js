@@ -35,6 +35,34 @@ export const useAuthstore = create(
         }
       },
 
+      signup: async (values) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const { data } = await authService.signup(values);
+          if (data.token) {
+            set({
+              token: data.token,
+              user: data.user,
+              isAuthenticated: true,
+            });
+          }
+
+          set({ isLoading: false, error: null });
+          return { success: true };
+        } catch (error) {
+          const message =
+            error.response?.data?.message || "Registration failed";
+
+          set({
+            isLoading: false,
+            error: message,
+          });
+
+          return { success: false, error: message };
+        }
+      },
+
       logout: () =>
         set({
           token: null,

@@ -96,7 +96,7 @@ function LoginPage() {
                 <span className="mr-2 text-sm text-gray-700">Remember me</span>
               </label>
               <Link
-                to="/forgot-password"
+                to="/forget-password"
                 className="text-sm text-[#D9176C] hover:underline"
               >
                 Forget password?

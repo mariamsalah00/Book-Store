@@ -21,12 +21,17 @@ export const forgetPasswordValidationSchema = Yup.object({
 });
 
 export const resetPasswordValidationSchema = Yup.object({
-  password: Yup.string().required("Password is required").min(6, "Minimum 6 characters"),
+  password: Yup.string()
+    .required("Password is required")
+    .min(8, "Minimum 8 characters"),
   confirm: Yup.string()
     .required("Confirm password is required")
     .oneOf([Yup.ref("password")], "Passwords do not match"),
 });
 
 export const addCodeValidationSchema = Yup.object({
-  code: Yup.string().trim().length(6, "Code must be 6 digits").required("OTP is required"),
+  code: Yup.string()
+    .trim()
+    .length(6, "Code must be 6 digits")
+    .required("OTP is required"),
 });
