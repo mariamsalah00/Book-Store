@@ -3,6 +3,7 @@ import LinkItem from "../ui/LinkItem";
 import { FaHeart, FaShoppingCart } from "react-icons/fa";
 import { useAuthstore } from "../../store/state";
 import { useNavigate, Link } from "react-router-dom";
+import SideMenu from "./SideMenu";
 
 export default function Navbar() {
   const isAuthenticated = useAuthstore((state) => state.isAuthenticated);
@@ -12,10 +13,10 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center py-7.5 px-35 bg-white/20 border-b border-white/20 ">
+    <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center py-7.5 px-4 md:px-35 bg-white/20 border-b border-white/20 ">
       <NavbarLogo />
 
-      <div className="nav-links flex items-center gap-10 mr-auto">
+      <div className="nav-links hidden md:flex items-center gap-10 mr-auto">
         <LinkItem to={"/"}>home</LinkItem>
         <LinkItem to={"books"}>books</LinkItem>
         <LinkItem to={"about"}>about us</LinkItem>
@@ -47,7 +48,7 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <div className="avatar flex items-center gap-3 text-white mr-4">
+            <div className="avatar flex items-center gap-3 text-white">
               <div className="w-10 h-10 rounded-full border-2 border-white/20 ">
                 <img
                   src="https://img.daisyui.com/images/profile/demo/batperson@192.webp"
@@ -56,7 +57,7 @@ export default function Navbar() {
                 />
               </div>
             </div>
-            <div className="flex flex-col">
+            <div className="flex-col hidden md:flex">
               <span className="font-medium text-white/70">
                 {user?.first_name} {user?.last_name}
               </span>
@@ -64,14 +65,17 @@ export default function Navbar() {
             </div>
 
             <button
-              className="px-4 py-2 rounded bg-white/20 text-white border border-white/20"
+              className=" hidden md:block px-4 py-2 rounded bg-white/20 text-white border border-white/20"
               onClick={() => {
                 logout();
                 navigate("/login");
               }}
             >
+              {/* add icon in mobile  */}
               logout
             </button>
+
+            <SideMenu />
           </>
         )}
       </div>
