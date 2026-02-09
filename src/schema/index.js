@@ -15,3 +15,18 @@ export const signupValidationSchema = Yup.object({
     .required("Confirm password required"),
   terms: Yup.boolean().oneOf([true], "You must accept terms"),
 });
+
+export const forgetPasswordValidationSchema = Yup.object({
+  email: Yup.string().email("Invalid email").required("Email required"),
+});
+
+export const resetPasswordValidationSchema = Yup.object({
+  password: Yup.string().required("Password is required").min(6, "Minimum 6 characters"),
+  confirm: Yup.string()
+    .required("Confirm password is required")
+    .oneOf([Yup.ref("password")], "Passwords do not match"),
+});
+
+export const addCodeValidationSchema = Yup.object({
+  code: Yup.string().trim().length(6, "Code must be 6 digits").required("OTP is required"),
+});
