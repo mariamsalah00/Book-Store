@@ -8,6 +8,9 @@ import HomePage from "../pages/HomePage";
 import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import About from "../pages/About";
+import BooksPage from "../pages/BooksPage";
+import NotFoundPage from "../pages/NotFoundPage";
+import ErrorPage from "../pages/ErrorPage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // use v6.30 createBrowserRouter and dont forget to take look for v7 its more easier like nextjs routing system (app router)
@@ -19,11 +22,18 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
         element: <HomePage />,
       },
+
+      {
+        path: "books",
+        element: <BooksPage />,
+      },
+
       {
         path: "about",
         element: <About />,
@@ -38,6 +48,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <AuthLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "login",
@@ -56,6 +67,11 @@ const router = createBrowserRouter([
         element: <ForgetPasswordPage />,
       },
     ],
+  },
+  // Catch-all route for 404 Not Found
+  {
+    path: "*",
+    element: <NotFoundPage />,
   },
 ]);
 
