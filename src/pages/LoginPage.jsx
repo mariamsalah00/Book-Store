@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Field, Form, Formik, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useAuthstore } from "../store/state";
@@ -11,27 +8,16 @@ import { loginValidationSchema } from "../schema";
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [apiError, setApiError] = useState("");
-
-  const login  = useAuthstore((state) => state.login);
+  const { login, error, isLoading, clearError } = useAuthstore();
   const navigate = useNavigate();
 
   const handleLogin = async (values) => {
-    setApiError("");
-    let url = "https://bookstore.eraasoft.pro/api/login";
-    try {
-      const res = await axios.post(url, values);
-      console.log("Login successful:", res.data);
-      let token = res.data.token;
-      login(token);
+    clearError();
+    const result = await login(values);
+    if (result.success) {
       toast.success("Login successful!");
       navigate("/");
-    } catch (error) {
-      if (error.response?.data?.message) {
-        setApiError(error.response.data.message);
-      } else {
-        setApiError("Invalid email or password");
-      }
+    } else {
       toast.error("Login failed");
     }
   };
@@ -48,11 +34,9 @@ function LoginPage() {
           onSubmit={(values) => handleLogin(values)}
         >
           <Form className="space-y-6">
-            {apiError && (
+            {error && (
               <div className="text-red-600 text-sm bg-red-100 p-3 rounded-lg">
-                {apiError.includes("email")
-                  ? "Email is invalid or not registered"
-                  : apiError}
+                {error}
               </div>
             )}
 
@@ -112,7 +96,7 @@ function LoginPage() {
                 <span className="mr-2 text-sm text-gray-700">Remember me</span>
               </label>
               <Link
-                to="/forget-password"
+                to="/forgot-password"
                 className="text-sm text-[#D9176C] hover:underline"
               >
                 Forget password?
@@ -122,9 +106,10 @@ function LoginPage() {
             {/* Button */}
             <button
               type="submit"
-              className="w-full bg-[#D9176C] hover:bg-[#B01258] text-white font-semibold py-3 rounded-lg transition-colors"
+              disabled={isLoading}
+              className="w-full bg-[#D9176C] hover:bg-[#B01258] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Log in
+              {isLoading ? "Logging in..." : "Log in"}
             </button>
           </Form>
         </Formik>
