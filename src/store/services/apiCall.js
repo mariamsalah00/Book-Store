@@ -47,4 +47,11 @@ export const bookService = {
   },
 };
 
+export const AllBooksService = {
+  getAllBooks: async () => {
+    const response = await api.get("/book");
+    return response.data;
+  },
+};
+
 export default api;
